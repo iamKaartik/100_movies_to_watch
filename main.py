@@ -1,20 +1,14 @@
-
+import requests
 from bs4 import BeautifulSoup
 
-file = open("website.html", encoding="utf8")
-content = file.read()
+response = requests.get("https://web.archive.org/web/20200518073855/https://www.empireonline.com/movies/features/best-movies-2/")
 
-soup = BeautifulSoup(content, "html.parser")
-all_anchor_tags = soup.find_all(name="a")
+yc_webpage = response.text
 
-for tag in all_anchor_tags:
-    pass
-    #print(tag)
+soup = BeautifulSoup(yc_webpage, "html.parser")
+movies_list = [movie.getText() for movie in soup.find_all(name="h3", class_="title")]
+movies = movies_list[::-1]
 
-heading = soup.find(name="h1", id="name")
-print(heading)
-
-section_heading = soup.find(name="h3", class_="heading")
-print(section_heading.get("class"))
-
-file.close()
+with open("movies.txt",mode="w") as file:
+    for mov in movies:
+        file.write(f"{mov}\n")
